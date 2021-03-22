@@ -1,15 +1,51 @@
-% getting the matrix of potential pairings to assign costs
-pairings = [1 1;1 0;1 1;1 1;1 1;0 0;1 1;0 0;1 0;1 0;0 1;0 1;1 1;1 0;1 1;1 1;0 0;1 1;0 0;1 1;0 1;0 1;1 0;1 0;1 1;1 1;1 1;1 1;1 1;1 1;0 0;0 0;1 1;1 1;0 0;0 0];
+% getting the A matrix of potential pairings to assign costs (currently
+% just team 1 feasible pairings
+A = [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1;
+     1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0 1 1 1 1 1 1;
+     0 0 0 1 1 1 0 0 0 1 0 0 0 0 1 1 1 1 0 0 0 0 1 1;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 1 1 0 0 1 0 0 1 0 0 0 1 1 0 0 1 1 0 0 1 1 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+     1 0 1 0 1 0 0 1 0 0 0 1 0 1 0 1 0 1 0 1 0 1 0 0];
+     
+% splitting into individual A matrices for each team
+numCols = width(A)/4; %change to width(pairs)/4
+A = mat2cell(A, [24], [numCols numCols numCols numCols]);
 
-% splitting into individual vectors
-pairs = num2cell(pairings,1);
+% splitting each teams A matrix into individual vectors
+t1Pairs = num2cell(A{1},1);
+t2Pairs = num2cell(A{2},1);
+t3Pairs = num2cell(A{3},1);
+t4Pairs = num2cell(A{4},1);
 
-for i = 1:2
+t1Cost = [];
+t2Cost = [];
+t3Cost = [];
+t4Cost = [];
+
+for i = 1:numCols
     % splitting into individual vectors for each team based on table 2
-    t1move = pairs{i}([1 5 9 12 13 17 21 24 25 29 33 36]);
-    t2move = pairs{i}([2 6 9 12 14 18 22 23 26 30 34 35]);
-    t3move = pairs{i}([3 7 10 11 15 19 21 24 27 31 34 35]);
-    t4move = pairs{i}([4 8 10 11 16 20 22 23 28 32 33 36]);
+    t1move = t1Pairs{i}([1 5 8 9 13 16 17 21 24]);
+    t2move = t2Pairs{i}([2 5 8 10 14 15 18 22 23]);
+    t3move = t3Pairs{i}([3 6 7 11 13 16 19 22 23]);
+    t4move = t4Pairs{i}([4 6 7 12 14 15 20 21 24]);
 
     t1moveCost = movingCosts(t1move);
     t2moveCost = movingCosts(t2move);
@@ -17,17 +53,20 @@ for i = 1:2
     t4moveCost = movingCosts(t4move);
 
     % splitting into individual vectors for each team based on games in table 2
-    t1game = pairs{i}([9 21 33]);
-    t2game = pairs{i}([9 22 34]);
-    t3game = pairs{i}([10 21 34]);
-    t4game = pairs{i}([10 22 33]);
+    t1game = t1Pairs{i}([5 13 21]);
+    t2game = t2Pairs{i}([5 15 23]);
+    t3game = t3Pairs{i}([7 13 23]);
+    t4game = t4Pairs{i}([7 15 21]);
 
     t1gameCost = broadcastCosts(t1game);
     t2gameCost = broadcastCosts(t2game);
     t3gameCost = broadcastCosts(t3game);
     t4gameCost = broadcastCosts(t4game);
 
-    pairCost = t1moveCost + t1gameCost + t2moveCost + t2gameCost + t3moveCost + t3gameCost + t4moveCost + t4gameCost
+    t1Cost = [t1Cost; t1moveCost + t1gameCost];
+    t2Cost = [t2Cost; t2moveCost + t2gameCost];
+    t3Cost = [t3Cost; t3moveCost + t3gameCost];
+    t4Cost = [t4Cost; t4moveCost + t4gameCost];
 end
     
 function y = movingCosts(x)
@@ -35,7 +74,7 @@ function y = movingCosts(x)
     movingPen = 20;
 
     % tallying the number of time the team has moved
-    moves = 12-sum(x);
+    moves = 9-sum(x);
    
     y = moves*movingPen;
 end
