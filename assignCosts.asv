@@ -45,7 +45,7 @@ for i = 1:numCols
     t4Cost = [t4Cost; t4moveCost + t4gameCost];
 end
 
-cost_matrix = [t1Cost' t2Cost.' t3Cost.' t4Cost.'];
+cost_matrix = [t1Cost t2Cost.' t3Cost.' t4Cost.'];
     
 function y = movingCosts(x)
     % penalty cost of moving to a different facility
