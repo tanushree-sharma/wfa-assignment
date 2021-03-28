@@ -14,4 +14,4 @@ x=intlinprog(f,[1:m],A,b,Aeq,beq,0*f,0*f+1);
 
 
 i=find(x==1);
-optimal_solution= A(:,i)
+optimal_solution= A(:,i);
