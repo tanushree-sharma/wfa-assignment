@@ -68,7 +68,7 @@ end
 h = [home_fx fx; home_fy fy]
 
 % distance - cost matrix
-c = [0 40 33 5; 40 0 16 27; 33 16 0 26; 5 27 26 0];
+c = [0 40 33 5; 40 0 16 27; 33 16 0 26; 5 27 26 0]
 
 
 f = [assign_costs2(1, 2, 1, g, h, c); assign_costs2(1, 2, 2, g, h,c); assign_costs2(1, 2, 3, g, h,c); assign_costs2(1, 2, 4, g, h,c); assign_costs2(1, 2, 5, g, h,c); assign_costs2(1, 2, 6, g, h,c);
@@ -76,17 +76,23 @@ f = [assign_costs2(1, 2, 1, g, h, c); assign_costs2(1, 2, 2, g, h,c); assign_cos
     assign_costs2(1, 4, 1, g, h, c); assign_costs2(1, 4, 2, g, h,c); assign_costs2(1, 4, 3, g, h, c); assign_costs2(1, 4, 4, g, h,c); assign_costs2(1, 4, 5, g, h,c); assign_costs2(1, 4, 6, g, h,c);
     assign_costs2(2, 3, 1, g, h,c); assign_costs2(2, 3, 2, g, h,c); assign_costs2(2, 3, 3, g, h,c); assign_costs2(2, 3, 4, g, h,c); assign_costs2(2, 3, 5, g, h,c); assign_costs2(2, 3, 6, g, h,c);
     assign_costs2(2, 4, 1, g, h,c); assign_costs2(2, 4, 2, g, h,c); assign_costs2(2, 4, 3, g, h,c); assign_costs2(2, 4, 4, g, h,c); assign_costs2(2, 4, 5, g, h,c); assign_costs2(2, 4, 6, g, h,c);
-    assign_costs2(3, 4, 1, g, h,c); assign_costs2(3, 4, 2, g, h,c); assign_costs2(3, 4, 3, g, h,c); assign_costs2(3, 4, 4, g, h,c); assign_costs2(3, 4, 5, g, h,c); assign_costs2(3, 4, 6, g, h,c)];
+    assign_costs2(3, 4, 1, g, h,c); assign_costs2(3, 4, 2, g, h,c); assign_costs2(3, 4, 3, g, h,c); assign_costs2(3, 4, 4, g, h,c); assign_costs2(3, 4, 5, g, h,c); assign_costs2(3, 4, 6, g, h,c)]
 
-A_eq=zeros(12,36);
-A_eq(1:6,1:36)=[eye(6),eye(6),eye(6),eye(6),eye(6),eye(6)];
+A=zeros(12,36);
+A(1:6,1:36)=[eye(6),eye(6),eye(6),eye(6),eye(6),eye(6)]
 
 for k=1:6
-A_eq(6+k,1+6*(k-1):6*k)=[1,1,1,1,1,1]
+A(6+k,1+6*(k-1):6*k)=[1,1,1,1,1,1]
 end
 
+[n,m]=size(A);
+b = ones(n,1);
+
+lb = zeros(m,1);
+ub = ones(m,1);
+
 % teams cannot play on the same day constraint
-A = [1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0;
+p = [1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0;
     0	1	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0;
     0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0;
     0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0;
@@ -99,24 +105,19 @@ A = [1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0;
     0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	1	0	0;
     0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0;
     0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	0;
-    0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	1;
-    0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1;
-    0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	1;
-    0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	1;
-    0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0];
+    
 
-%A= [A; p]
 
-[n,m]=size(A_eq);
-[x,y]=size(A);
 
-b_eq = ones(n,1);
-b = ones(x,1);
 
-lb = zeros(m,1);
-ub = ones(m,1);
 
-final_sol = intlinprog(f,[1:m],A,b,A_eq,b_eq,lb,ub);
+
+
+
+
+]
+
+final_sol = intlinprog(f,[1:m],[],[],A,b,lb,ub);
 
 function cost2 = assign_costs2(t1, t2, game_num, g, h,c)
     h_teams=h;
