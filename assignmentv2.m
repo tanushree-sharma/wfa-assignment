@@ -76,6 +76,8 @@ h = [home_fx fx; home_fy fy]
 % distance - cost matrix
 c = [0 40 33 5; 40 0 16 27; 33 16 0 26; 5 27 26 0];
 
+% travel time - cost matrix
+%c = [0 32 38 21; 32 0 28 40; 38 28 0 40; 21 40 40 0]
 
 f = [assign_costs2(1, 2, 1, g, h, c); assign_costs2(1, 2, 2, g, h,c); assign_costs2(1, 2, 3, g, h,c); assign_costs2(1, 2, 4, g, h,c); assign_costs2(1, 2, 5, g, h,c); assign_costs2(1, 2, 6, g, h,c);
     assign_costs2(1, 3, 1, g, h, c); assign_costs2(1, 3, 2, g, h,c); assign_costs2(1, 3, 3, g, h,c); assign_costs2(1, 3, 4, g, h,c); assign_costs2(1, 3, 5, g, h,c); assign_costs2(1, 3, 6, g, h,c);
@@ -111,8 +113,6 @@ A = [1	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0;
     0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	1;
     0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	0	1	0];
 
-%A= [A; p]
-
 [n,m]=size(A_eq);
 [x,y]=size(A);
 
@@ -123,6 +123,9 @@ lb = zeros(m,1);
 ub = ones(m,1);
 
 final_sol = intlinprog(f,[1:m],A,b,A_eq,b_eq,lb,ub);
+%final_sol = intlinprog(f,[1:m],[],[],A_eq,b_eq,lb,ub);
+schedule =  reshape(final_sol,6,6).'
+
 
 function cost2 = assign_costs2(t1, t2, game_num, g, h,c)
     h_teams=h;
